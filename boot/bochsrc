@@ -1,0 +1,5 @@
+megs: 32
+floppya: 1_44=test_boot.img, status=inserted
+boot: a
+log: bochs.log
+mouse: enabled=0
