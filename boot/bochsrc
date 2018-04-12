@@ -1,4 +1,6 @@
 megs: 32
+romimage: file=$BXSHARE/BIOS-bochs-latest, address=0xfffe0000, options=fastboot
+vgaromimage: file=$BXSHARE/VGABIOS-lgpl-latest
 floppya: 1_44=test_boot.img, status=inserted
 boot: a
 log: bochs.log
