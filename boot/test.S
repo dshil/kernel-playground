@@ -7,7 +7,7 @@
 main:
     jmp boot
 
-    msg: .asciz "Hello World\n\r"
+    os_label: .asciz "Welcome to HAOS\n\r"
 
     .macro print msg
         leaw \msg, %si
@@ -25,7 +25,7 @@ main:
         ret
 
 boot:
-    print msg
+    print os_label
 
     . = main + 510
     .word 0xaa55

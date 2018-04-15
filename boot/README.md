@@ -40,3 +40,7 @@ Look at the last bytes (510 and 511). You should see the following.
     ```
         000001f0: 0000 0000 0000 0000 0000 0000 0000 55aa  ..............U.
     ```
+
+## HAOS
+
+HAOS stands for a hack OS.
