@@ -24,3 +24,19 @@ visit: http://bochs.sourceforge.net/doc/docbook/user/compiling.html .
 * The boot sector must contains master boot record identified by the two
   bytes signature: 0x55 0xaa for 510 and 511 bytes respectively.
 * The boot loader code must fit into 512 bytes of boot sector.
+
+## Debug
+
+There are many possibilities to verify if your executable code that will be
+loaded into RAM contains the valid master boot record signature. First you'll
+need a some kind of HEX editor. The simplest way I'd recommend is to use vim:
+
+    ```
+        r !xxd boot/test_boot.bin
+    ```
+
+Look at the last bytes (510 and 511). You should see the following.
+
+    ```
+        000001f0: 0000 0000 0000 0000 0000 0000 0000 55aa  ..............U.
+    ```
