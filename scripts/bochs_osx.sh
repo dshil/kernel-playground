@@ -6,10 +6,8 @@ export CFLAGS="-I/opt/X11/include"
 export CXXFLAGS="-I/opt/X11/include"
 export LDFLAGS="-L/opt/X11/lib -lX11"
 
-curdir=$(pwd)
-echo $curdir
-
-cd $HOME/soft/bochs
+dir=$(pwd)
+cd $HOME/src/bochs
 
 make dist-clean
 
@@ -33,4 +31,4 @@ make install
 export BXSHARE="$HOME/opt/bochs/share/bochs"
 export PATH="$PATH:$HOME/opt/bochs/bin"
 
-cd $curdir
+cd $dir
