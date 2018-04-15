@@ -16,7 +16,7 @@ main:
 
     .write_out:
         lodsb
-        or %al, %al
+        orb %al, %al
         jz .write_out_end
         movb $0x0e, %ah
         int $0x10
