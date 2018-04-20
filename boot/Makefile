@@ -1,16 +1,12 @@
-.PHONY: example clean
+.PHONY: boot clean
 
 all:
-	make example
+	make boot
 
-emulate:
-	dd if=/dev/zero of=test_boot.img bs=512 count=2880; \
-	dd if=test.bin of=test_boot.img; \
-	bochs
-
-example:
-	as test.S -o test.o; \
-	ld -e main -Ttext 0x7c00 --oformat=binary test.o -o test.bin
+boot:
+	nasm -f bin boot.asm -o boot.bin; \
+	dd if=/dev/zero of=boot.img bs=512 count=2880; \
+	dd if=boot.bin of=boot.img;
 
 clean:
 	rm -rf *.o *.bin *.out *.log *.img
