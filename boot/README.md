@@ -10,6 +10,12 @@ resources:
 * OS development series:
     * http://www.brokenthorn.com/Resources/OSDevIndex.html
 
+More importantly there was a meeting with friends one Sunday and one of them
+said: "I try to read Linux kernel source but don't understand the entry point
+and as a result I've stopped digging into it". It's a key problem for most
+people because they don't understand how OS works from the ground up, from the
+pushing the power button and this very small hande-made OS will try to fix this
+issue.
 
 # Tests
 
@@ -20,7 +26,9 @@ visit: http://bochs.sourceforge.net/doc/docbook/user/compiling.html .
 
 ## Boot loader for floppy disk
 
-* The executable code should be placed into RAM to address `0x7c00`.
+* The BIOS loads the boot loader by INT 0x19 at absolute address `0x7c00`. As a
+  result we should set this base address while writing assembly that will force
+  all instruction to use this offset.
 * The boot sector must contains master boot record identified by the two
   bytes signature: 0x55 0xaa for 510 and 511 bytes respectively.
 * The boot loader code must fit into 512 bytes of boot sector.
