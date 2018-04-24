@@ -14,7 +14,7 @@ More importantly there was a meeting with friends one Sunday and one of them
 said: "I try to read Linux kernel source but don't understand the entry point
 and as a result I've stopped digging into it". It's a key problem for most
 people because they don't understand how OS works from the ground up, from the
-pushing the power button and this very small hande-made OS will try to fix this
+pushing the power button. This very small hande-made OS will try to fix this
 issue.
 
 # Tests
