@@ -234,22 +234,24 @@ main:
         push bx
 
     LOAD_IMAGE:
-        pop bx
-
         mov ax, WORD [cluster]
         call CLUSTER_LBA
         xor cx, cx
         mov cl, BYTE [bpb_sectors_per_cluster]
-        call READ_SECTORS
 
+        ; remember that we use BX for both: reading the next cluster number from
+        ; the FAT at 0x0200 and reading the next sector of actual data at 0x0050
+        pop bx
+        call READ_SECTORS
         push bx
 
         mov ax, WORD [cluster]
         mov cx, ax
         mov dx, ax
+
+        ; compute the next cluster number as: next = prev + prev / 2
         shr dx, 0x0001
         add cx, dx
-
         mov bx, [load_addr]
         add bx, cx
         mov dx, WORD [bx]
@@ -257,7 +259,7 @@ main:
         jnz .ODD_CLUSTER
 
     .EVEN_CLUSTER:
-        and dx, 0000111111111111b
+        and dx, 0x0FFF
         jmp .DONE
 
     .ODD_CLUSTER:

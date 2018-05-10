@@ -13,20 +13,39 @@ instruction from the process of the higher Ring it's simply interrupt the
 process, switch the Ring and the kernel kills the user-space process with
 SIGFAULT or SIGSEGV.
 
-## Do we really need multistage Boot loaders?
+## Multistage Bootloaders
 
+Multistage bootloader simply means that after the BIOS loads the bootloader it
+does some routines and loads another program that doesn't have any memory
+constraints. Do we really need it? It'll complicate our program a lot.
+
+The short answer is yes. We need to a lot of stuff to do and it's not possible
+to fit it into the 512 bytes of available memory.
+
+## Boot Sector
+
+Boot sector is the region where our bootloader is located.
+
+* The BIOS loads the bootloader by INT 0x19 at absolute address `0x7c00`. As a
+  result we should set this base address while writing assembly that will force
+  all instruction to use this offset.
+* The boot sector must contains master boot record identified by the two
+  bytes signature: `0x55 0xaa` for 510 and 511 bytes respectively.
+* The bootloader code must fit into 512 bytes of boot sector.
 
 ## FAT
 
-Let's discover a disk partion for a FAT file system. We'll use Floppy disk as
-example for simplicity
+At the beginning I want to keep things as simple as possible. On this step is
+more importantly to focuse on the bootloader domain rather that FS domain. We'll
+cover inernals of different FS later.
 
+We'll use Floppy disk as example for simplicity. There is a disk partion for
+a FAT FS.
+
+```
 | Region        | Boot Sector | FAT1 | FAT2  | Root Dir | Data Area |
 | Sector Number | 0           | 1-9  | 10-18 | 19-32    | 33-2879   |
-
-**Boot Sector**
-
-This is the region where our bootloader is located.
+```
 
 **FAT1 and FAT2**
 
@@ -34,10 +53,10 @@ FAT stands for a File Allocation Table. FAT2 is just a backup of the FAT1.
 
 **Additional Resources**:
 
-    * https://www.win.tue.nl/~aeb/linux/fs/fat/fat-1.html
-    * http://www.karbosguide.com/hardware/module6a4.htm
-    * http://elm-chan.org/docs/fat_e.html
-    * http://www.tavi.co.uk/phobos/fat.html
+* https://www.win.tue.nl/~aeb/linux/fs/fat/fat-1.html
+* http://www.karbosguide.com/hardware/module6a4.htm
+* http://elm-chan.org/docs/fat_e.html
+* http://www.tavi.co.uk/phobos/fat.html
 
 ## Disk formatting
 
@@ -47,33 +66,79 @@ bootloader on the floppy disk. I'll mention two of them:
 * Using loopback device + mount(2). Use https://wiki.osdev.org/Loopback_Device
 * Using Mtools (mcopy). This method is used in the current Makefile.
 
+I'd prefer to use mcopy because it doesn't require any `sudo` and much simpler
+than using loopback device + mount(2) + umount(2).
+
+## Workflow
+
+Simplified version of the bootloader workflow can be found below. It'll help you
+to have the big picture overview. Use it each time when you get confused because
+of the large number of parts.
+
+
+     ┌────┐             ┌────────────┐
+     │boot│             │second_stage│
+     └─┬──┘             └─────┬──────┘
+       │────┐                 │
+       │    │ load root dir   │
+       │<───┘                 │
+       │                      │
+       │────┐
+       │    │ find file by name
+       │<───┘
+       │                      │
+       │────┐
+       │    │ find file cluster
+       │<───┘
+       │                      │
+       │────┐                 │
+       │    │ load cluster    │
+       │<───┘                 │
+       │                      │
+       │ jump to second stage │
+       │ ─────────────────────>
+       │                      │
+       │                      │────┐
+       │                      │    │ init kernel
+       │                      │<───┘
+     ┌─┴──┐             ┌─────┴──────┐
+     │boot│             │second_stage│
+     └────┘             └────────────┘
+
 ## Debug
+
+### Bochs
+
+Remember that when you start a bochs emulator it starts own debugger and sets a
+breakpoint at 0x7c00 (where you are loaded by the BIOS) and waits until you'll
+continue the execution. Simply type `c` or `cont` and you'll see the result of
+your program.
 
 ### Loading second stage bootloader from FAT formatted disk
 
 * At the beginning ensure that your image was properly formatted.
 
-```sh
-    fsck.fat boot.img -v
-```
+  ```sh
+  fsck.fat boot.img -v
+  ```
 
 * Choose the right file name for your second stage bootloader. Note that the
   it's case-sensitive. Go to your foo.img and explore what name the file has
   after it was copied into disk. If you use vim simply use the following
 
   ```
-    r !xxd foo.img
+  r !xxd foo.img
   ```
 
 * Write the helper function that will dump the content of the root directory. A
   few notes should be mentioned here:
 
-    * The example assumes that you're successfully loaded root directory at some
-      location in the memory. We'll load it right after our bootloader entry
-      point (0x7c00).
-    * bpb_root_entries = 224 (number of entries in the root directory).
-    * root_dir_load_addr = 0x0200 (pointer to the first entry in the root dir).
-    * filename_sz is exactly 11 bytes (for FAT12).
+   * The example assumes that you're successfully loaded root directory at some
+     location in the memory. We'll load it right after our bootloader entry
+     point (0x7c00).
+   * `bpb_root_entries = 224` (number of entries in the root directory).
+   * `root_dir_load_addr = 0x0200` (address of the first entry in the root dir).
+   * filename_sz is exactly 11 bytes (for FAT12).
 
 ```asm
 LOOKUP_FILE:
@@ -173,37 +238,37 @@ PRINT_DATA:
     * Edit your bochsrc by adding the following line:
 
         ```
-            display_library: x, options="gui_debug"
+        display_library: x, options="gui_debug"
         ```
     * Run bochs.
 
-    For more detailed information please use the following resources:
+For more detailed information please use the following resources:
 
-      * http://bochs.sourceforge.net/doc/docbook/user/internal-debugger.html
-      * man pages
+* http://bochs.sourceforge.net/doc/docbook/user/internal-debugger.html
+* man pages:
 
-        ```
-            man bochs
-            man bochsrc
-        ```
+```sh
+   man bochs
+   man bochsrc
+```
 
-    Most of your time debugging the bootloader you'll probably do the following:
+Most of your time debugging the bootloader you'll probably do the following:
 
-        ```
-            lb 0x7c00
-            cont
-            s
-            lb <addr>
-        ```
+```
+   lb 0x7c00
+   cont
+   s
+   lb <addr>
+```
 
-    It's translated into:
+It's translated into:
 
-        * `lb 0x7c00` - set the break point at the address 0x7c00 (It's exactly
-          the address where we'll be loaded by the BIOS).
-        * `continue` - continue execution until the recently set break point.
-        * `step [count]` - execute one instruction (BIOS still need to make a
-          jump to our code).
-        * Now you're at the first line of your break point entry point.
+   * `lb 0x7c00` - set the break point at the address 0x7c00 (It's exactly
+     the address where we'll be loaded by the BIOS).
+   * `continue` - continue execution until the recently set break point.
+   * `step [count]` - execute one instruction (BIOS still need to make a
+     jump to our code).
+   * Now you're at the first line of your break point entry point.
 
 ## Reading clusters from FAT
 
@@ -211,17 +276,21 @@ Remember that for FAT12 each table entry is 12 bit in size. Keeping this in mind
 we need to use 16 bit registers to read data from it. As a result we'll have
 some overlapping. Let's explore an example for deeper understanding.
 
+```
 | cluster  0     | cluster 1      | cluster 2      | cluster n      |
 | 0x000100010000 | 0x000100000100 | 0x000100010000 | 0x000100000000 |
+```
 
 Clusters values aren't important in this example because they are just the
 random 12-bit values.
 
 As was mentioned we'll use 16-bit registers to read 12-bit clusters value.
 
+```
 | cluster  0         | cluster 1          | cluster 2          | cluster n      |
 | 0x000100010000     | 0x000100000100     | 0x000100010000     | 0x000100000000 |
 | 0x0000000000000000 | 0x0000000000000000 | 0x0000000000000000 |                |
+```
 
 As you can see for the even cluster we accidentally read 4 extra bits from the
 next cluster value. From the other side for the odd cluster we skip the first 4
@@ -230,3 +299,31 @@ reading:
 
 * For Even clusters use low 12 bits.
 * For Odd cluster shift back by 4 bits.
+
+It's worst to mention that clusters them self should be read from the FAT data
+region (Data Area in the table below).
+
+```
+| Region        | Boot Sector | FAT1 | FAT2  | Root Dir | Data Area |
+| Sector Number | 0           | 1-9  | 10-18 | 19-32    | 33-2879   |
+```
+
+As a result each time when we convert the cluster number to the LBA we should
+ajust this offset:
+
+```asm
+    mov ax, [root_dir_entry_sz]     ; size of one entry in root dir
+    mov dx, [root_dir_entry_sz]
+    mul WORD [bpb_root_entries]     ; total size of root dir in bytes
+    div WORD [bpb_bytes_per_sector] ; total number of sectors in root dir
+    xchg ax, cx                     ; store the sectors number in CX
+
+    mov al, BYTE [bpb_number_of_FATs]   ; number of FATs
+    mul WORD [bpb_sectors_per_FAT]      ; number of sectors used by FATs
+    add ax, WORD [bpb_reserved_sectors] ; ensure reserved sectors
+
+    mov WORD [datasector], ax ; pointer to the root dir region
+    add WORD [datasector], cx ; pointer to the data region
+```
+
+`datasector` contains the number of first sector of the data region.
