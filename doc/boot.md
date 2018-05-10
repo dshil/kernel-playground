@@ -32,6 +32,21 @@ This is the region where our bootloader is located.
 
 FAT stands for a File Allocation Table. FAT2 is just a backup of the FAT1.
 
+**Additional Resources**:
+
+    * https://www.win.tue.nl/~aeb/linux/fs/fat/fat-1.html
+    * http://www.karbosguide.com/hardware/module6a4.htm
+    * http://elm-chan.org/docs/fat_e.html
+    * http://www.tavi.co.uk/phobos/fat.html
+
+## Disk formatting
+
+There are a lot of possibilities to put your bootloader and second stage
+bootloader on the floppy disk. I'll mention two of them:
+
+* Using loopback device + mount(2). Use https://wiki.osdev.org/Loopback_Device
+* Using Mtools (mcopy). This method is used in the current Makefile.
+
 ## Debug
 
 ### Loading second stage bootloader from FAT formatted disk
@@ -190,4 +205,28 @@ PRINT_DATA:
           jump to our code).
         * Now you're at the first line of your break point entry point.
 
+## Reading clusters from FAT
 
+Remember that for FAT12 each table entry is 12 bit in size. Keeping this in mind
+we need to use 16 bit registers to read data from it. As a result we'll have
+some overlapping. Let's explore an example for deeper understanding.
+
+| cluster  0     | cluster 1      | cluster 2      | cluster n      |
+| 0x000100010000 | 0x000100000100 | 0x000100010000 | 0x000100000000 |
+
+Clusters values aren't important in this example because they are just the
+random 12-bit values.
+
+As was mentioned we'll use 16-bit registers to read 12-bit clusters value.
+
+| cluster  0         | cluster 1          | cluster 2          | cluster n      |
+| 0x000100010000     | 0x000100000100     | 0x000100010000     | 0x000100000000 |
+| 0x0000000000000000 | 0x0000000000000000 | 0x0000000000000000 |                |
+
+As you can see for the even cluster we accidentally read 4 extra bits from the
+next cluster value. From the other side for the odd cluster we skip the first 4
+bit of the required cluster. Let's summarize this into two rules for cluster
+reading:
+
+* For Even clusters use low 12 bits.
+* For Odd cluster shift back by 4 bits.
