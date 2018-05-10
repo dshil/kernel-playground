@@ -1,0 +1,38 @@
+
+     ┌────┐             ┌────────────┐
+     │boot│             │second_stage│
+     └─┬──┘             └─────┬──────┘
+       │────┐                 │
+       │    │ load root dir   │
+       │<───┘                 │
+       │                      │
+       │────┐
+       │    │ find file by name
+       │<───┘
+       │                      │
+       │────┐
+       │    │ find file cluster
+       │<───┘
+       │                      │
+       │────┐                 │
+       │    │ load cluster    │
+       │<───┘                 │
+       │                      │
+       │ jump to second stage │
+       │ ─────────────────────>
+       │                      │
+       │                      │────┐
+       │                      │    │ init kernel
+       │                      │<───┘
+     ┌─┴──┐             ┌─────┴──────┐
+     │boot│             │second_stage│
+     └────┘             └────────────┘
+
+@startuml
+boot -> boot : load root dir
+boot -> boot : find file by name
+boot -> boot : find file cluster
+boot -> boot : load cluster
+boot -> second_stage : jump to second stage
+second_stage -> second_stage: init kernel
+@enduml
