@@ -23,7 +23,7 @@ main:
     pop ds
 
     mov si, msg
-    call PRINT
+    call PUTS16
 
     hlt
 

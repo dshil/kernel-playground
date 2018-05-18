@@ -3,9 +3,9 @@
 ; +---------------------------------------------------------------------------+
 PRINT_DBG:
     mov si, msg_dbg
-    call PRINT
+    call PUTS16
     mov si, msg_CRLF
-    call PRINT
+    call PUTS16
     ret
 
 PRINT_DATA:
@@ -23,7 +23,7 @@ PRINT_DATA:
     .DONE:
         ret
 
-PRINT:
+PUTS16:
     pusha
 
     .MAIN:
