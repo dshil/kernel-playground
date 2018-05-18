@@ -58,7 +58,7 @@ main:
             loop .LOOP
 
             mov si, msg_file_not_found
-            call PRINT
+            call PUTS16
             ret
 
     LOAD_FAT:
