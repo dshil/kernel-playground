@@ -127,7 +127,7 @@ root_dir_entry_sz  DB 0x20
 load_addr          DB 0x0200
 filename_sz        DB 0xB
 
-image_name         DB "LOADER  BIN" ; The length must be equal to
+image_name         DB "HLDR    BIN" ; The length must be equal to
                                     ; filename_sz to ensure that we don't
                                     ; corrupt the root directory.
 msg_file_not_found DB "Error: file not found", 0
