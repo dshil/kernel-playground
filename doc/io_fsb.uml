@@ -1,0 +1,33 @@
+
+     ┌───┐          ┌────────┐          ┌────────┐          ┌───────────┐          ┌──────────────┐
+     │cpu│          │addr_bus│          │data_bus│          │control_bus│          │dev_controller│
+     └─┬─┘          └───┬────┘          └───┬────┘          └─────┬─────┘          └──────┬───────┘
+       │put port address│                   │                     │                       │
+       │────────────────>                   │                     │                       │
+       │                │                   │                     │                       │
+       │      put value to read/write       │                     │                       │
+       │────────────────────────────────────>                     │                       │
+       │                │                   │                     │                       │
+       │                │      set WRITE=1  │                     │                       │
+       │─────────────────────────────────────────────────────────>│                       │
+       │                │                   │                     │                       │
+       │                │    set IO_ACCESS=1│                     │                       │
+       │─────────────────────────────────────────────────────────>│                       │
+       │                │                   │                     │                       │
+       │                │                   │check device number in IVT                   │
+       │                │ ────────────────────────────────────────────────────────────────>
+       │                │                   │                     │                       │
+       │                │                   │          read/write data to device          │
+       │                │                   │ ────────────────────────────────────────────>
+     ┌─┴─┐          ┌───┴────┐          ┌───┴────┐          ┌─────┴─────┐          ┌──────┴───────┐
+     │cpu│          │addr_bus│          │data_bus│          │control_bus│          │dev_controller│
+     └───┘          └────────┘          └────────┘          └───────────┘          └──────────────┘
+
+@startuml
+cpu -> addr_bus : put port address
+cpu -> data_bus : put value to read/write
+cpu -> control_bus : set WRITE=1
+cpu -> control_bus : set IO_ACCESS=1
+addr_bus -> dev_controller : check device number in IVT
+data_bus -> dev_controller : read/write data to device
+@enduml

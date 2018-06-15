@@ -1,0 +1,37 @@
+
+     ┌───┐          ┌───────────┐          ┌────────┐          ┌──────────────┐          ┌────────┐
+     │cpu│          │control_bus│          │addr_bus│          │mem_controller│          │data_bus│
+     └─┬─┘          └─────┬─────┘          └───┬────┘          └──────┬───────┘          └───┬────┘
+       │     READ=1       │                    │                      │                      │
+       │─────────────────>│                    │                      │                      │
+       │                  │                    │                      │                      │
+       │               put_addr                │                      │                      │
+       │──────────────────────────────────────>│                      │                      │
+       │                  │                    │                      │                      │
+       │                  │                    │     read address     │                      │
+       │                  │                    │  ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ >                      │
+       │                  │                    │                      │                      │
+       │                  │                    │                      │      write_value     │
+       │                  │                    │                      │ ─────────────────────>
+       │                  │                    │                      │                      │
+       │                  │                  READ=0                   │                      │
+       │                  │<──────────────────────────────────────────│                      │
+       │                  │                    │                      │                      │
+       │                  │                 READY=1                   │                      │
+       │                  │<──────────────────────────────────────────│                      │
+       │                  │                    │                      │                      │
+       │                  │                  read_value               │                      │
+       │<─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ │
+     ┌─┴─┐          ┌─────┴─────┐          ┌───┴────┐          ┌──────┴───────┐          ┌───┴────┐
+     │cpu│          │control_bus│          │addr_bus│          │mem_controller│          │data_bus│
+     └───┘          └───────────┘          └────────┘          └──────────────┘          └────────┘
+
+@startuml
+cpu -> control_bus : READ=1
+cpu -> addr_bus : put_addr
+mem_controller <-- addr_bus : read address
+mem_controller -> data_bus : write_value
+mem_controller -> control_bus : READ=0
+mem_controller -> control_bus : READY=1
+cpu <-- data_bus : read_value
+@enduml
