@@ -6,9 +6,9 @@ start:
     jmp main
 
 
-SEGMENT .data
+segment .rodata
 
-; The length must be equal to filename_sz to ensure that we don't corrupt
+; The length must be equal to FILENAME_SZ to ensure that we don't corrupt
 ; the root directory.
 image_name         DB "HLDR    BIN"
 msg_file_not_found DB "Error: file not found", 0
@@ -21,7 +21,7 @@ msg_file_not_found DB "Error: file not found", 0
 %define FILENAME_SZ 0xB
 %define READ_SECTORS_ADDR_OFF 0x0200
 
-SEGMENT .text
+segment .text
 
 ; +---------------------------------------------------------------------------+
 ;                       Required Headers

@@ -6,4 +6,3 @@ boot: a
 log: bochs.log
 mouse: enabled=0
 display_library: x
-
