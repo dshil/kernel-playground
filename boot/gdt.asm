@@ -1,12 +1,18 @@
-bits 16
-
-gdt_start:
+gdt32:
 
 ; null:
     dd 0
     dd 0
 
-; code:
+.code: equ $ - gdt32
+	dw 0FFFFh 			; limit low
+	dw 0 				; base low
+	db 0 				; base middle
+	db 10011010b 		; access
+	db 11001111b 		; granularity
+	db 0 				; base high
+
+
     ; segment limit (bits 0-15)
     dw 0xFFFF
 
@@ -47,7 +53,7 @@ gdt_start:
 
 ; Contains the same data as Code descriptor except for 43 bit. Data descriptor
 ; isn't executable.
-; data:
+.data: equ $ - gdt32
     dw 0xFFFF
     dw 0
     db 0
@@ -55,6 +61,6 @@ gdt_start:
     db 11001111b
     db 0
 
-gdtr:
-    size dw gdtr - gdt_start - 1
-    base dd gdt_start
+.ptr:
+    size dw $ - gdt32 - 1
+    base dd gdt32
