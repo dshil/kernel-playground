@@ -8,9 +8,9 @@ bits 16
 ;   CX=n, where n is the number of first equal bytes.
 ;
 ; ES and DS can be different.
-STRCMP16:
+strcmp16:
     push di
-    call STRLEN16
+    call strlen16
     pop di
     mov dx, cx
 
@@ -20,7 +20,7 @@ STRCMP16:
     pop es
 
     mov di, si
-    call STRLEN16
+    call strlen16
 
     pop es
     pop di
@@ -47,7 +47,7 @@ STRCMP16:
 ; Callee saved registers:
 ;   CX contains number of characters in the string.
 ;   DI points to the next byte after the null-terminated byte.
-STRLEN16:
+strlen16:
     xor cx, cx
     xor ax, ax
     cld

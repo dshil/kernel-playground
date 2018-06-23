@@ -63,7 +63,7 @@ main:
     ; Load root directory sectors.
     ; CX stores the number of sectors of the root directory.
     ; AX stores the number of first sector of the root directory.
-    LOAD_ROOT_DIR:
+    load_root_dir:
         xor cx, cx
 
         mov ax, ROOT_DIR_ENTRY_SZ       ; size of one entry in root dir
@@ -80,9 +80,9 @@ main:
 
         ; load the first sector of root directory at 0x7c00:0x0200
         mov bx, READ_SECTORS_ADDR_OFF
-        call READ_SECTORS
+        call read_sectors
 
-    LOOKUP_FILE:
+    .lookup_file:
         ; iterate over each file until CX != 0
         mov cx, [bpb_root_entries]
 
@@ -101,7 +101,7 @@ main:
             ; repeat while strings in DI, SI match and CX != 0.
             rep cmpsb
             pop di
-            je LOAD_FAT
+            je .load_fat
 
             pop cx
             add di, ROOT_DIR_ENTRY_SZ
@@ -111,7 +111,7 @@ main:
             call PUTS16
             ret
 
-    LOAD_FAT:
+    .load_fat:
         mov dx, [di + 0x1A] ; di points to the beginning of the root dir entry
         mov WORD [cluster], dx
 
@@ -124,7 +124,7 @@ main:
                                             ; sector
 
         mov bx, READ_SECTORS_ADDR_OFF
-        call READ_SECTORS
+        call read_sectors
 
         ; Load second stage bootloader.
         mov ax, SECOND_STAGE_ADDR_BASE
@@ -132,16 +132,16 @@ main:
         mov bx, SECOND_STAGE_ADDR_OFF
         push bx
 
-    LOAD_IMAGE:
+    .load_image:
         mov ax, WORD [cluster]
-        call CLUSTER_LBA
+        call cluster_lba
         xor cx, cx
         mov cl, BYTE [bpb_sectors_per_cluster]
 
         ; remember that we use BX for both: reading the next cluster number from
         ; the FAT at 0x0200 and reading the next sector of actual data at 0x1000
         pop bx
-        call READ_SECTORS
+        call read_sectors
         push bx
 
         mov ax, WORD [cluster]
@@ -155,21 +155,21 @@ main:
         add bx, cx
         mov dx, WORD [bx]
         test al, 1
-        jnz .ODD_CLUSTER
+        jnz .odd_cluster
 
-    .EVEN_CLUSTER:
+    .even_cluster:
         and dx, 0x0FFF
-        jmp short .DONE
+        jmp short .done
 
-    .ODD_CLUSTER:
+    .odd_cluster:
         shr dx, 0x0004
 
-    .DONE:
+    .done:
         mov WORD [cluster], dx
         cmp dx, 0x0FF0
-        jb LOAD_IMAGE
+        jb .load_image
 
-    LOAD_KERNEL:
+    .load_kernel:
         ; Perform far jamp and say goodbye to the bootloader.
         jmp SECOND_STAGE_ADDR_BASE:SECOND_STAGE_ADDR_OFF
 

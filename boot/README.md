@@ -3,11 +3,10 @@
 The development was begun because of the inspiration from the following
 resources:
 
-* Series of bootloader development articles:
+* Series of OS development articles:
     * https://www.codeproject.com/Articles/664165/Writing-a-boot-loader-in-Assembly-and-C-Part
     * https://www.codeproject.com/Articles/668422/Writing-a-boot-loader-in-Assembly-and-C-Part
     * https://www.codeproject.com/Articles/737545/Writing-a-bit-dummy-kernel-in-C-Cplusplus
-* OS development series:
     * http://www.brokenthorn.com/Resources/OSDevIndex.html
 
 More importantly there was a meeting with friends one Sunday and one of them
@@ -43,7 +42,3 @@ Look at the last bytes (510 and 511). You should see the following.
    ```
        000001f0: 0000 0000 0000 0000 0000 0000 0000 55aa  ..............U.
    ```
-
-## HAOS
-
-HAOS stands for a hack OS.
