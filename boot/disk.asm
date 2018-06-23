@@ -30,12 +30,12 @@ bs_file_system:          DB "FAT12   "     ; must be 8 bytes
 
 ; Ensure to begin read from the sector 0 each time.
 ; 0x00 - Reset disk routine.
-RESET:
+reset:
     xor dx, dx
     mov dl, BYTE [bs_drive_number]
     mov ah, 0x00
     int 0x13
-    jc RESET
+    jc reset
 
     mov ax, 0x1000 ; set address for read sector to 0x1000:0x0
     mov es, ax
@@ -43,14 +43,14 @@ RESET:
     ret
 
 ; Read CX sectors into the memory begin with AX sector.
-READ_SECTORS:
-    .MAIN:
+read_sectors:
+    .main:
         mov di, 0x0005
-    .READLOOP:
+    .readloop:
         push ax
         push bx
         push cx
-        call LBA_CHS
+        call lba_chs
 
         mov ah, 0x02                   ; read sector routine
         mov al, 0x01                   ; number of sectors to read
@@ -59,31 +59,31 @@ READ_SECTORS:
         mov dh, BYTE [absolute_head]   ; head number
         mov dl, BYTE [bs_drive_number] ; drive number
         int 0x13                       ; call the BIOS
-        jnc .SUCCESS
+        jnc .success
 
-    .RESET:
+    .reset:
         xor ax, ax
         int 0x13
-        jc .RESET
+        jc .reset
 
         pop cx
         pop bx
         pop ax
 
         dec di
-        jnz .READLOOP
+        jnz .readloop
         int 0x18
-    .SUCCESS:
+    .success:
         pop cx
         pop bx
         pop ax
         add bx, WORD [bpb_bytes_per_sector]
         inc ax
-        loop .MAIN
+        loop .main
         ret
 
 ; LBA = (cluster - 2) * sectors_per_cluster
-CLUSTER_LBA:
+cluster_lba:
     mov ax, WORD [cluster]
     sub ax, 0x0002
     xor cx, cx
@@ -98,7 +98,7 @@ CLUSTER_LBA:
 ; absolute_sector = (LBA % sectors_per_track) + 1
 ; absolute_head = (LBA / sectors_per_track) % number_of_heads
 ; absolute_track = LBA / (sectors_per_track * number_of_heads)
-LBA_CHS:
+lba_chs:
     xor dx, dx
     div WORD [bpb_sectors_per_track]
     inc dl
