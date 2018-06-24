@@ -1,39 +1,53 @@
-; +---------------------------------------------------------------------------+
-;                       Helper routines
-; +---------------------------------------------------------------------------+
-PRINT_DBG:
+; Prints debug message on the screen.
+;
+; Caller saved registers: SI.
+;
+; Can't be used in the Protected Mode.
+print_dbg:
     mov si, msg_dbg
-    call PUTS16
+    call puts16
     mov si, msg_CRLF
-    call PUTS16
+    call puts16
     ret
 
-PRINT_DATA:
-    .MAIN:
+; Prints file names in FAT12 formatted disk.
+; Only first 11 bytes will be printed.
+;
+; Caller saved registers: AX, CX, DI.
+;
+; Can't be used in the Protected Mode.
+print_data:
+    .main:
         mov cx, 0xB
-    .LOOP:
+    .loop:
         mov al, [es:di]
         or al, al
-        jz .DONE
+        jz .done
         mov ah, 0x0e
         int 0x10
         inc di
-        loop .LOOP
+        loop .loop
         ret
-    .DONE:
+    .done:
         ret
 
-PUTS16:
+; Prints string located in SI on the screen.
+;
+; Caller saved registers: SI
+; Callee saved register: GPR
+;
+; Can't be used in the Protected Mode.
+puts16:
     pusha
 
-    .MAIN:
+    .main:
         lodsb
         or al, al
-        jz .DONE
+        jz .done
         mov ah, 0x0e
         int 0x10
-        jmp .MAIN
-    .DONE:
+        jmp .main
+    .done:
         popa
         ret
 

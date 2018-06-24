@@ -1,5 +1,3 @@
-bits 16
-
 ; Compares if two strings in ES:DI and DS:SI are equal.
 ;
 ; Caller saved registers: CX, DX.

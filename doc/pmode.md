@@ -90,3 +90,6 @@ There are 3 "simple" steps to properly jump into protected mode:
 
     See [NASM DOC](https://www.nasm.us/doc/nasmdoc7.html) for more information.
 
+### Gate A20
+
+WIP

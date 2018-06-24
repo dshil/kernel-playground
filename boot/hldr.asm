@@ -1,15 +1,14 @@
 bits 16
 org 0x10000
 
-start:
-    jmp stage2
-
 segment .rodata
 
 msg_load db "Loading operating system...", 0x00
-msg_welcome db "Welcome to HAOS...", 0x00
 
 segment .text
+
+start:
+    jmp stage2
 
 ; +---------------------------------------------------------------------------+
 ;                       Required Headers
@@ -32,7 +31,7 @@ stage2:
     sti
 
     mov si, msg_load
-    call PUTS16
+    call puts16
 
     cli
 
@@ -40,13 +39,18 @@ stage2:
     call open_a20_gate
     call enable_pmode
 
+
+; Enables A20 gate.
+;
+; Caller saved registers: AX.
 open_a20_gate:
-    in al, 0x93
+    in al, 0x92
     or al, 2
     and al, ~1
     out 0x92, al
     ret
 
+; Enables Protected mode.
 enable_pmode:
     mov eax, cr0
     or al, 1

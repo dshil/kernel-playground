@@ -5,12 +5,12 @@ gdt32:
     dd 0
 
 .code: equ $ - gdt32
-	dw 0FFFFh 			; limit low
-	dw 0 				; base low
-	db 0 				; base middle
-	db 10011010b 		; access
-	db 11001111b 		; granularity
-	db 0 				; base high
+	dw 0FFFFh           ; limit low
+	dw 0                ; base low
+	db 0                ; base middle
+	db 10011010b        ; access
+	db 11001111b        ; granularity
+	db 0                ; base high
 
 
     ; segment limit (bits 0-15)
@@ -27,7 +27,7 @@ gdt32:
     ; 42 bit: 0 -> expansion direction.
     ; 43 bit: 1 -> This is the code descriptor.
     ; 44 bit: 1 -> This is code/data descriptor.
-
+    ;
     ; Ring bits: Ring 0
     ;   45 bit: 0
     ;   46 bit: 0
