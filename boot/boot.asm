@@ -1,10 +1,9 @@
-bits 16 ; We are still in Real Mode (Ring 0)
+bits 16
 
 org 0
 
 start:
     jmp main
-
 
 segment .rodata
 
@@ -108,7 +107,7 @@ main:
             loop .LOOP
 
             mov si, msg_file_not_found
-            call PUTS16
+            call puts16
             ret
 
     .load_fat:

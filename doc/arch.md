@@ -2,7 +2,11 @@
 
 ### BIOS POST
 
+WIP
+
 ### Absolute and Linear Addressing
+
+WIP
 
 ### PAS
 
@@ -84,9 +88,15 @@ CPU to/from Memory Controller
 
 ## IO
 
+WIP
+
 ### Memory Mapping
 
+WIP
+
 ### Memory Mapped IO
+
+WIP
 
 ### Port Mapping
 
@@ -135,3 +145,5 @@ we'll use to read/write. Diagram below explains this process.
 
 
 **X86 Port Address Assignments**
+
+WIP
