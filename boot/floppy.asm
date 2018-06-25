@@ -69,7 +69,6 @@ read_sectors:
     .reset:
         xor ax, ax
         int 0x13
-        jc .reset
 
         pop cx
         pop bx
@@ -77,7 +76,7 @@ read_sectors:
 
         dec di
         jnz .readloop
-        int 0x18
+        int 0x18        ; We honestly tried but it's time to reboot.
     .success:
         pop cx
         pop bx
