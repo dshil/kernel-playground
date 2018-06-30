@@ -9,15 +9,16 @@ segment .rodata
 
 ; The length must be equal to FILENAME_SZ to ensure that we don't corrupt
 ; the root directory.
-image_name         DB "HLDR    BIN"
-msg_file_not_found DB "Error: file not found", 0
-msg_file_read_error DB "Error: failed to read file", 0
+image_name          db "HLDR    BIN"
 
 %define BOOT_ADDR_BASE 0x07C0
 %define STACK_ADDR_END 0xFFFF
-%define SECOND_STAGE_ADDR_BASE 0x1000
-%define SECOND_STAGE_ADDR_OFF 0x0000
-%define READ_SECTORS_ADDR_OFF 0x0200
+%define IMAGE_ADDR_BASE 0x1000
+%define IMAGE_ADDR_OFF 0x0000
+
+; We'll load second stage bootloader right after the boot sector. Remember that
+; a bootloader is loaded at 07C0:0.
+%define READ_FILE_ADDR_OFF 0x0200
 
 segment .text
 
@@ -62,8 +63,6 @@ main:
     call read_root_dir
 
     mov si, image_name
-    mov di, READ_SECTORS_ADDR_OFF
-
     call read_dentry
 
     test bx, bx
@@ -72,11 +71,9 @@ main:
     call read_file
 
     ; Perform far jamp and say goodbye to the bootloader.
-    jmp SECOND_STAGE_ADDR_BASE:SECOND_STAGE_ADDR_OFF
+    jmp IMAGE_ADDR_BASE:IMAGE_ADDR_OFF
 
     .read_dentry_error:
-        mov si, msg_file_not_found
-        call puts16
         ret
 
 ; Fill the boot signature and zero all remain unused bytes.
