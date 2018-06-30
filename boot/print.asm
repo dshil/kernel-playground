@@ -18,6 +18,8 @@ print_dbg:
 ; Can't be used in the Protected Mode.
 print_data:
     .main:
+        pusha
+        push di
         mov cx, 0xB
     .loop:
         mov al, [es:di]
@@ -27,8 +29,9 @@ print_data:
         int 0x10
         inc di
         loop .loop
-        ret
     .done:
+        pop di
+        popa
         ret
 
 ; Prints string located in SI on the screen.
