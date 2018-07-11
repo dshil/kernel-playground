@@ -24,11 +24,11 @@ start:
 ; +---------------------------------------------------------------------------+
 ;                       Required Headers
 ; +---------------------------------------------------------------------------+
-%include "print.asm"
-%include "gdt.asm"
-%include "string.asm"
-%include "floppy.asm"
-%include "fat12.asm"
+%include "boot/print.asm"
+%include "boot/gdt.asm"
+%include "boot/string.asm"
+%include "boot/floppy.asm"
+%include "boot/fat12.asm"
 
 ; +---------------------------------------------------------------------------+
 ;                       Second Stage Bootloader entry point
@@ -126,6 +126,3 @@ pmode_init:
         rep movsd
 
         jmp gdt32.code: dword KRNL_PADDR_OFF
-
-    .halt:
-        jmp short .halt

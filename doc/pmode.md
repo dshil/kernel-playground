@@ -93,3 +93,29 @@ There are 3 "simple" steps to properly jump into protected mode:
 ### Gate A20
 
 WIP
+
+### Loading Kernel at 1 Mb
+
+Recently we've done the following steps:
+
+* Enable A20 line to be able use more than 2^20 (1 Mb) addresses.
+* Enable Protected mode to be able use 32 bit registers + GDT.
+
+Keeping these in mind we can load our Kernel at the memory location begin with
+the logical address `0x100000` (1 Mb). For achieving this we'll do the following:
+
+* Load kernel during the second stage boot loading at some address below the
+  wondered address.
+* Enable A20 Line.
+* Enter PMode.
+* Copy kernel from the loaded address to the `0x100000`.
+* Perform a far jamp that forces CS to change its value.
+
+### Potential issues
+
+#### Kernel code doesn't loaded properly
+
+* You can overlap the code of your second stage loader with just loaded kernel
+  code. As a result you have GPF and triple fault.
+* You load kernel code at logical address A but perform a far jump to the
+  logical address B.
