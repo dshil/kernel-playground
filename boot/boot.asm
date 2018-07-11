@@ -25,9 +25,9 @@ segment .text
 ; +---------------------------------------------------------------------------+
 ;                       Required Headers
 ; +---------------------------------------------------------------------------+
-%include "floppy.asm"
-%include "fat12.asm"
-%include "print.asm"
+%include "boot/floppy.asm"
+%include "boot/fat12.asm"
+%include "boot/print.asm"
 
 ; +---------------------------------------------------------------------------+
 ;                       Bootloader Entry Point

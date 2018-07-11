@@ -5,14 +5,6 @@ gdt32:
     dd 0
 
 .code: equ $ - gdt32
-	dw 0FFFFh           ; limit low
-	dw 0                ; base low
-	db 0                ; base middle
-	db 10011010b        ; access
-	db 11001111b        ; granularity
-	db 0                ; base high
-
-
     ; segment limit (bits 0-15)
     dw 0xFFFF
 
