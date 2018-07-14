@@ -1,7 +1,7 @@
-/*
- * Kernel entry point
- */
+#include "drivers/screen.h"
+
 int main(void)
 {
-	for(;;);
+	clear_screen();
+	return 0;
 }

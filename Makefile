@@ -4,9 +4,17 @@ CFLAGS = -Wall \
 	 -Werror \
 	 -std=c99 \
 	 -nostdlib \
+	 -m32 \
+	 -ffreestanding \
 	 -Wl,-Ttext=0x100000
 
 temp_fat := temp_fat.img
+
+
+C_SOURCES = $(wildcard \
+		kernel/*.c \
+		drivers/*.c \
+		io/*.c)
 
 .PHONY:
 	all build image clean
@@ -14,12 +22,13 @@ temp_fat := temp_fat.img
 all:
 	make build
 	make image
+	bochs
 
 build:
 	mkdir -p bin; \
 	nasm -f bin boot/boot.asm -o bin/boot.bin; \
 	nasm -f bin boot/hldr.asm -o bin/HLDR.bin; \
-	$(CC) $(CFLAGS) kernel/kernel.c kernel/boot.c -o bin/kernel; \
+	$(CC) -I . $(CFLAGS) $(C_SOURCES) -o bin/kernel; \
 	objcopy -O binary -j .text bin/kernel bin/KRNL.bin; \
 	rm -rf bin/kernel
 
