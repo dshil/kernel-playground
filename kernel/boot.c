@@ -12,6 +12,7 @@ void _start()
 	__asm__("mov gs, ax");
 	__asm__("mov ss, ax");
 	__asm__("mov esp, 0x90000");
+	__asm__(".att_syntax prefix");
 
 	main();
 	for (;;);

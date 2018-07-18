@@ -11,4 +11,4 @@
 #define REG_SCREEN_CURSOR_LOW_BYTE 0x0F
 
 void clear_screen(void);
-void printk(char *fmt, ...);
+void printk(const char *fmt, ...);

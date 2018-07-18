@@ -16,7 +16,7 @@ void clear_screen(void)
 	set_cursor(get_offset(0, 0));
 }
 
-void printk(char *fmt, ...)
+void printk(const char *fmt, ...)
 {
 	while (*fmt)
 		printk_c(*fmt++, get_cursor(), COLOR_SCHEME_WHITE_ON_BLACK);

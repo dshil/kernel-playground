@@ -1,36 +1,43 @@
+.PHONY:
+	all build image clean
+
 CC     = gcc
 CFLAGS = -Wall \
 	 -Wpedantic \
 	 -Werror \
 	 -std=c99 \
 	 -nostdlib \
+	 -nostdinc \
+	 -fno-builtin \
+	 -fno-stack-protector \
+	 -nostartfiles \
+	 -nodefaultlibs \
 	 -m32 \
 	 -ffreestanding \
 	 -Wl,-Ttext=0x100000
 
-temp_fat := temp_fat.img
+AS = nasm
 
+LD      = ld
+LDFLAGS = -T link.ld -melf_i386 --oformat binary
 
 C_SOURCES = $(wildcard \
 		kernel/*.c \
 		drivers/*.c \
 		io/*.c)
 
-.PHONY:
-	all build image clean
+OBJ = ${C_SOURCES:.c=.o}
 
-all:
+temp_fat := temp_fat.img
+
+all: bin/KRNL.bin
 	make build
 	make image
-	bochs
 
 build:
 	mkdir -p bin; \
-	nasm -f bin boot/boot.asm -o bin/boot.bin; \
-	nasm -f bin boot/hldr.asm -o bin/HLDR.bin; \
-	$(CC) -I . $(CFLAGS) $(C_SOURCES) -o bin/kernel; \
-	objcopy -O binary -j .text bin/kernel bin/KRNL.bin; \
-	rm -rf bin/kernel
+	$(AS) -f bin boot/boot.asm -o bin/boot.bin; \
+	$(AS) -f bin boot/hldr.asm -o bin/HLDR.bin; \
 
 image:
 	dd if=/dev/zero of=bin/$(temp_fat) bs=512 count=2880; \
@@ -43,4 +50,10 @@ image:
 	rm -rf bin/$(temp_fat)
 
 clean:
-	rm -rf bin
+	rm -rf $(OBJ)
+
+bin/KRNL.bin: $(OBJ)
+	$(LD) $(LDFLAGS) $^ -o $@
+
+%.o: %.c
+	$(CC) -I . -c $(CFLAGS) $< -o $@
