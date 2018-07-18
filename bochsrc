@@ -1,7 +1,7 @@
 megs: 32
 romimage: file=$BXSHARE/BIOS-bochs-latest, address=0xfffe0000
 vgaromimage: file=$BXSHARE/VGABIOS-lgpl-latest
-floppya: 1_44=bin/boot.img, status=inserted
+floppya: 1_44=bin/metagros.img, status=inserted
 boot: a
 log: bin/bochs.log
 mouse: enabled=0
