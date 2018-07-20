@@ -4,8 +4,11 @@
 static void printk_c(char c, int offset, char attribute);
 static int handle_scrolling(int offset);
 static int get_offset(int row, int col);
+static int get_row_from_offset(int offset);
 static void set_cursor(int offset);
 static int get_cursor(void);
+
+static char *video_buff = (char *)VIDEO_ADDRESS;
 
 void clear_screen(void)
 {
@@ -24,7 +27,11 @@ void printk(const char *fmt, ...)
 
 static void printk_c(char c, int offset, char attribute)
 {
-	char *video_buff = (char *)VIDEO_ADDRESS;
+	if (c == '\n') {
+		int row = get_row_from_offset(offset);
+		set_cursor(get_offset(row + 1, 0));
+		return;
+	}
 
 	*(video_buff + offset) = c;
 	*(video_buff + offset + 1) = attribute;
@@ -74,4 +81,10 @@ static int get_cursor(void)
 	offset = low | (high << 8);
 
 	return offset * 2;
+}
+
+static int get_row_from_offset(int offset)
+{
+	offset /= 2;
+	return (offset - (offset % MAX_COLS)) / MAX_COLS;
 }
