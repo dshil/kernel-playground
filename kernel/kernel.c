@@ -4,11 +4,12 @@ int main(void)
 {
 	clear_screen();
 
-	char hello[] = "Hello World!";
+	char hello[] = "Hello World!\n";
 	printk(hello);
 
-	const char *msg = "One more time!";
+	const char *msg = "One more time!\n";
 	printk(msg);
 
+	printk("Welcome to metagros\n");
 	return 0;
 }
