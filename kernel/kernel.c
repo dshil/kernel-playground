@@ -1,15 +1,21 @@
 #include "drivers/screen.h"
+#include "hal/interrupt.h"
+#include "hal/gdt.h"
+#include "hal/idt.h"
 
 int main(void)
 {
+	disable_interrupts();
+
 	clear_screen();
 
-	char hello[] = "Hello World!\n";
-	printk(hello);
+	printk("HAL: setup GDT\n");
+	gdt_setup();
 
-	const char *msg = "One more time!\n";
-	printk(msg);
+	printk("HAL: setup IDT\n");
+	idt_setup();
 
-	printk("Welcome to metagros\n");
+	enable_interrupts();
+
 	return 0;
 }
