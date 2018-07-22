@@ -18,17 +18,26 @@ CFLAGS = -Wall \
 C_SOURCES = $(wildcard \
 		kernel/*.c \
 		drivers/*.c \
+		hal/*.c \
+		lib/*.c \
 		io/*.c)
+AS_SOURCES = $(wildcard \
+		kernel/*.asm \
+		drivers/*.asm \
+		hal/*.asm \
+		lib/*.asm \
+		io/*.asm)
 
-OBJ = ${C_SOURCES:.c=.o}
+OBJ := ${C_SOURCES:.c=.o}
+OBJ := $(OBJ) ${AS_SOURCES:.asm=.o}
 
 AS      = nasm
-ASFLAGS = -f bin
+ASFLAGS = -f elf
 
 LD      = ld
 LDFLAGS = -T link.ld -melf_i386 --oformat binary
 
-temp_fat := temp_fat.img
+temp_fat = temp_fat.img
 
 BOOTBIN   = boot.bin
 LOADERBIN = HLDR.bin
@@ -41,8 +50,8 @@ all:
 
 build: $(OBJ)
 	mkdir -p bin; \
-	$(AS) $(ASFLAGS) boot/boot.asm -o bin/$(BOOTBIN); \
-	$(AS) $(ASFLAGS) boot/hldr.asm -o bin/$(LOADERBIN);
+	$(AS) -f bin boot/boot.asm -o bin/$(BOOTBIN); \
+	$(AS) -f bin boot/hldr.asm -o bin/$(LOADERBIN);
 	$(LD) $(LDFLAGS) $^ -o bin/$(KERNELBIN);
 
 image:
@@ -59,3 +68,6 @@ clean:
 
 %.o: %.c
 	$(CC) -I . -c $(CFLAGS) $< -o $@
+
+%.o: %.asm
+	$(AS) -I . $(ASFLAGS) $< -o $@

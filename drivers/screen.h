@@ -1,3 +1,6 @@
+#ifndef SCREEN_H
+#define SCREEN_H
+
 #define VIDEO_ADDRESS 0xB8000
 
 #define MAX_ROWS 25
@@ -12,3 +15,5 @@
 
 void clear_screen(void);
 void printk(const char *fmt, ...);
+
+#endif // SCREEN_H

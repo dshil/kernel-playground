@@ -2,7 +2,6 @@ int main(void);
 
 void _start()
 {
-
 	__asm__(".intel_syntax noprefix");
 	__asm__("cli");
 	__asm__("mov ax, 0x10");
