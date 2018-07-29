@@ -2,6 +2,8 @@
 #include "hal/interrupt.h"
 #include "hal/gdt.h"
 #include "hal/idt.h"
+#include "hal/pic.h"
+#include "hal/pit.h"
 
 int main(void)
 {
@@ -12,8 +14,14 @@ int main(void)
 	printk("HAL: setup GDT\n");
 	gdt_setup();
 
+	printk("HAL: remap PIC\n");
+	pic_remap();
+
 	printk("HAL: setup IDT\n");
 	idt_setup();
+
+	printk("HAL: setup PIT\n");
+	pit_setup(100000);
 
 	enable_interrupts();
 
