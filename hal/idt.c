@@ -1,7 +1,6 @@
 #include "lib/stddefs.h"
 
 #include "idt.h"
-#include "pic.h"
 #include "interrupt.h"
 
 void idt_load(idt_ptr_t *ptr);
@@ -12,17 +11,9 @@ static idt_entry_t idt[IDT_MAX_DESCRIPTORS];
 static void idt_set_descriptor(uint32_t index,
 		uint16_t selector,
 		uint8_t flags,
-		irq_handler_t handler);
-
-static void init_idt(void);
+		isr_handler_t handler);
 
 void idt_setup(void)
-{
-	remap_pic();
-	init_idt();
-}
-
-static void init_idt(void)
 {
 	idtr.size = (sizeof(idt_entry_t) * IDT_MAX_DESCRIPTORS) - 1;
 	idtr.base_addr = (uint32_t)&idt;
@@ -86,7 +77,7 @@ static void init_idt(void)
 static void idt_set_descriptor(uint32_t index,
 		uint16_t selector,
 		uint8_t flags,
-		irq_handler_t handler)
+		isr_handler_t handler)
 {
 	idt_entry_t *entry = &idt[index];
 	memset((void *)entry, 0, sizeof(idt_entry_t));

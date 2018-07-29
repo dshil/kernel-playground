@@ -3,6 +3,8 @@
 
 #include "lib/stddefs.h"
 
+#define MAX_ISRS 256
+
 #define IRQ0 32
 #define IRQ1 33
 #define IRQ2 34
@@ -22,8 +24,6 @@
 
 void enable_interrupts(void);
 void disable_interrupts(void);
-
-typedef void (*irq_handler_t)(void);
 
 typedef struct {
     uint32_t ds;
@@ -48,54 +48,58 @@ typedef struct {
     uint32_t ss;
 } registers_t;
 
-void isr0(void);
-void isr1(void);
-void isr2(void);
-void isr3(void);
-void isr4(void);
-void isr5(void);
-void isr6(void);
-void isr7(void);
-void isr8(void);
-void isr9(void);
-void isr10(void);
-void isr11(void);
-void isr12(void);
-void isr13(void);
-void isr14(void);
-void isr15(void);
-void isr16(void);
-void isr17(void);
-void isr18(void);
-void isr19(void);
-void isr20(void);
-void isr21(void);
-void isr22(void);
-void isr23(void);
-void isr24(void);
-void isr25(void);
-void isr26(void);
-void isr27(void);
-void isr28(void);
-void isr29(void);
-void isr30(void);
-void isr31(void);
+typedef void (*isr_handler_t)(registers_t);
 
-void irq0(void);
-void irq1(void);
-void irq2(void);
-void irq3(void);
-void irq4(void);
-void irq5(void);
-void irq6(void);
-void irq7(void);
-void irq8(void);
-void irq9(void);
-void irq10(void);
-void irq11(void);
-void irq12(void);
-void irq13(void);
-void irq14(void);
-void irq15(void);
+void register_isr(uint8_t isrno, isr_handler_t handler);
+
+void isr0(registers_t);
+void isr1(registers_t);
+void isr2(registers_t);
+void isr3(registers_t);
+void isr4(registers_t);
+void isr5(registers_t);
+void isr6(registers_t);
+void isr7(registers_t);
+void isr8(registers_t);
+void isr9(registers_t);
+void isr10(registers_t);
+void isr11(registers_t);
+void isr12(registers_t);
+void isr13(registers_t);
+void isr14(registers_t);
+void isr15(registers_t);
+void isr16(registers_t);
+void isr17(registers_t);
+void isr18(registers_t);
+void isr19(registers_t);
+void isr20(registers_t);
+void isr21(registers_t);
+void isr22(registers_t);
+void isr23(registers_t);
+void isr24(registers_t);
+void isr25(registers_t);
+void isr26(registers_t);
+void isr27(registers_t);
+void isr28(registers_t);
+void isr29(registers_t);
+void isr30(registers_t);
+void isr31(registers_t);
+
+void irq0(registers_t);
+void irq1(registers_t);
+void irq2(registers_t);
+void irq3(registers_t);
+void irq4(registers_t);
+void irq5(registers_t);
+void irq6(registers_t);
+void irq7(registers_t);
+void irq8(registers_t);
+void irq9(registers_t);
+void irq10(registers_t);
+void irq11(registers_t);
+void irq12(registers_t);
+void irq13(registers_t);
+void irq14(registers_t);
+void irq15(registers_t);
 
 #endif // INTERRUPT_H
