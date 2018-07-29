@@ -8,7 +8,7 @@ static int get_row_from_offset(int offset);
 static void set_cursor(int offset);
 static int get_cursor(void);
 
-static char *video_buff = (char *)VIDEO_ADDRESS;
+static char *video_buff = (char *)SCREEN_VIDEO_ADDRESS;
 
 void clear_screen(void)
 {
@@ -41,12 +41,12 @@ static void printk_c(char c, int offset, char attribute)
 	set_cursor(offset);
 }
 
-static int get_offset(int row, int col)
+static inline int get_offset(int row, int col)
 {
 	return (row * MAX_COLS + col) * 2;
 }
 
-static int handle_scrolling(int offset)
+static inline int handle_scrolling(int offset)
 {
 	return offset;
 }
@@ -58,11 +58,11 @@ static void set_cursor(int offset)
 	unsigned char low = offset & 0xFF;
 	unsigned char high = (offset >> 8) & 0xFF;
 
-	port_byte_out(REG_SCREEN_CTRL, REG_SCREEN_CURSOR_LOW_BYTE);
-	port_byte_out(REG_SCREEN_DATA, low);
+	port_byte_out(SCREEN_PORT_CTL, SCREEN_PORT_SET_CURSOR_LOW_BYTE);
+	port_byte_out(SCREEN_PORT_DATA, low);
 
-	port_byte_out(REG_SCREEN_CTRL, REG_SCREEN_CURSOR_HIGH_BYTE);
-	port_byte_out(REG_SCREEN_DATA, high);
+	port_byte_out(SCREEN_PORT_CTL, SCREEN_PORT_SET_CURSOR_HIGH_BYTE);
+	port_byte_out(SCREEN_PORT_DATA, high);
 }
 
 static int get_cursor(void)
@@ -72,18 +72,18 @@ static int get_cursor(void)
 	unsigned char low = 0;
 	unsigned char high = 0;
 
-	port_byte_out(REG_SCREEN_CTRL, REG_SCREEN_CURSOR_LOW_BYTE);
-	low = port_byte_in(REG_SCREEN_DATA);
+	port_byte_out(SCREEN_PORT_CTL, SCREEN_PORT_SET_CURSOR_LOW_BYTE);
+	low = port_byte_in(SCREEN_PORT_DATA);
 
-	port_byte_out(REG_SCREEN_CTRL, REG_SCREEN_CURSOR_HIGH_BYTE);
-	high = port_byte_in(REG_SCREEN_DATA);
+	port_byte_out(SCREEN_PORT_CTL, SCREEN_PORT_SET_CURSOR_HIGH_BYTE);
+	high = port_byte_in(SCREEN_PORT_DATA);
 
 	offset = low | (high << 8);
 
 	return offset * 2;
 }
 
-static int get_row_from_offset(int offset)
+static inline int get_row_from_offset(int offset)
 {
 	offset /= 2;
 	return (offset - (offset % MAX_COLS)) / MAX_COLS;
