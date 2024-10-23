@@ -1,7 +1,7 @@
 #ifndef STDDEFS_H
 #define STDDEFS_H
 
-#include "string.h"
 #include "stdint.h"
+#include "string.h"
 
 #endif // STDDEFS_H
