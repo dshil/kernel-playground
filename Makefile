@@ -9,6 +9,7 @@ CFLAGS = -Wall \
 	 -nostdlib \
 	 -nostdinc \
 	 -fno-builtin \
+	 -fno-pic \
 	 -fno-stack-protector \
 	 -nostartfiles \
 	 -nodefaultlibs \
@@ -56,7 +57,7 @@ build: $(OBJ)
 
 image:
 	dd if=/dev/zero of=bin/$(temp_fat) bs=512 count=2880; \
-	mkfs.msdos bin/$(temp_fat) -F12 -r224; \
+	sudo mkfs.msdos bin/$(temp_fat) -F12 -r224; \
 	mcopy -i bin/$(temp_fat) bin/$(LOADERBIN) :: ; \
 	mcopy -i bin/$(temp_fat) bin/$(KERNELBIN) :: ; \
 	dd if=/dev/zero of=bin/$(IMAGE) bs=512 count=2880; \
