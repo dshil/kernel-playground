@@ -14,6 +14,6 @@
 #define SCREEN_PORT_SET_CURSOR_LOW_BYTE 0x0F
 
 void clear_screen(void);
-void printk(const char *fmt, ...);
+void printk(const char* fmt, ...);
 
 #endif // SCREEN_H

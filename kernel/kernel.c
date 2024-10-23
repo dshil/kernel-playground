@@ -1,29 +1,28 @@
 #include "drivers/screen.h"
-#include "hal/interrupt.h"
 #include "hal/gdt.h"
 #include "hal/idt.h"
+#include "hal/interrupt.h"
 #include "hal/pic.h"
 #include "hal/pit.h"
 
-int main(void)
-{
-	disable_interrupts();
+int main(void) {
+    disable_interrupts();
 
-	clear_screen();
+    clear_screen();
 
-	printk("HAL: setup GDT\n");
-	gdt_setup();
+    printk("HAL: setup GDT\n");
+    gdt_setup();
 
-	printk("HAL: remap PIC\n");
-	pic_remap();
+    printk("HAL: remap PIC\n");
+    pic_remap();
 
-	printk("HAL: setup IDT\n");
-	idt_setup();
+    printk("HAL: setup IDT\n");
+    idt_setup();
 
-	printk("HAL: setup PIT\n");
-	pit_setup(100000);
+    printk("HAL: setup PIT\n");
+    pit_setup(100000);
 
-	enable_interrupts();
+    enable_interrupts();
 
-	return 0;
+    return 0;
 }

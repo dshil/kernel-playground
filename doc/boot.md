@@ -75,7 +75,6 @@ Simplified version of the bootloader workflow can be found below. It'll help you
 to have the big picture overview. Use it each time when you get confused because
 of the large number of parts.
 
-
      ┌────┐             ┌────────────┐
      │boot│             │second_stage│
      └─┬──┘             └─────┬──────┘
