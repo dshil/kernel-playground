@@ -15,8 +15,9 @@ void interrupt_handler(registers_t regs) {
 }
 
 void irq_handler(registers_t regs) {
-    if (regs.intno > IRQ7)
+    if (regs.intno > IRQ7) {
         port_byte_out(PIC_PORT_SLAVE_CTL, PIC_PORT_EIO);
+    }
 
     port_byte_out(PIC_PORT_MASTER_CTL, PIC_PORT_EIO);
 
